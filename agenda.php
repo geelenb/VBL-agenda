@@ -20,7 +20,6 @@ curl_setopt($ch, CURLOPT_URL, "http://vblcb.wisseq.eu/VBLCB_WebService/data/Team
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
 
-
 $headers = array();
 $headers[] = "Origin: http://vblweb.wisseq.eu";
 $headers[] = "Accept-Encoding: gzip, deflate, sdch";
@@ -39,7 +38,6 @@ curl_close ($ch);
 
 $matches = json_decode($result);
 
-
 # Omzetten naar ics
 ###################
 
@@ -51,24 +49,6 @@ header('Content-Disposition: attachment; filename=' . 'vbl-kalender.ics');
 function dateToCal($timestamp) {
     return gmdate('Ymd\THis\Z', $timestamp);
 }
-function starttime($match) {
-    return substr($match->datumString, 6, 4) . 
-           substr($match->datumString, 2, 2) .
-           substr($match->datumString, 0, 2) .
-           'T' .
-           substr($match->beginTijd, 0, 2) .
-           substr($match->beginTijd, 2, 2) .
-           '00';
-}
-function endtime($match) {
-    return substr($match->datumString, 6, 4) . 
-           substr($match->datumString, 2, 2) .
-           substr($match->datumString, 0, 2) .
-           'T' .
-           sprintf('%02d', intval(substr($match->beginTijd, 0, 2)) + 2) .
-           substr($match->beginTijd, 2, 2) .
-           '00';
-}
 function summary($match) {
     if ($match->uitslag === '') { 
         return $match->tTNaam . ' - ' . $match->tUNaam;
@@ -76,11 +56,6 @@ function summary($match) {
         return $match->tTNaam . ' ' . $match->uitslag . ' ' . $match->tUNaam;
     }
 }
-# Escapes a string of characters
-function escapeString($string) {
-    return preg_replace('/([\,;])/','\\\$1', $string);
-}
-# 3. Echo out the ics file's contents
 ?>
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -88,7 +63,6 @@ PRODID:-//hacksw/handcal//NONSGML v1.0//EN
 CALSCALE:GREGORIAN
 <?php
 foreach ($matches as $i => $match) {
-
 ?>BEGIN:VEVENT
 SUMMARY:<?php echo htmlspecialchars(summary($match)) ?> 
 UID:<?php echo $match->guid ?> 
